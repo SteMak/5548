@@ -1,3 +1,3 @@
-module github.com/SteMak/bo0chance
+module github.com/SteMak/vanilla_bot
 
 go 1.13
