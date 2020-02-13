@@ -2,9 +2,9 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
+
+	"github.com/SteMak/vanilla/out"
 )
 
 var cfg config
@@ -22,12 +22,12 @@ type config struct {
 func Load(path string) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatal(err)
+		out.Fatal(err)
 	}
 
 	err = json.Unmarshal(data, &cfg)
 	if err != nil {
-		log.Fatal(err)
+		out.Fatal(err)
 	}
-	fmt.Println("Config loaded:", path)
+	out.Infoln("Config loaded:", path)
 }

@@ -1,53 +1,43 @@
 package vanilla
 
 import (
+	"github.com/SteMak/vanilla/out"
 
 	"github.com/SteMak/vanilla/config"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-type console struct {
-	timeFormat string
-}
-
 var (
-	out = console{
-		timeFormat: "15:04:05.000",
-	}
-	bot picker
+	bot vanilla
 )
 
-type picker struct {
+type vanilla struct {
 	session *discordgo.Session
-
-	debug bool
-	watch bool
-	mode  int
 }
 
-func initSession() *discordgo.Session {
+func authorize() {
 	s, err := discordgo.New(config.Session.Token)
 	if err != nil {
-		out.fatal(err)
+		out.Fatal(err)
 	}
 
 	if err := s.Open(); err != nil {
-		out.fatal("cannot open websocket:", err)
+		out.Fatal(err)
 	}
-	out.infoln("websocket started")
+	out.Infoln("websocket started")
 
-	out.infoln("authorized as:", s.State.User.String())
-	out.debugln("token:", s.Token)
+	out.Infoln("authorized as:", s.State.User.String())
+	out.Debugln("token:", s.Token)
 
 	s.SyncEvents = false
-	return s
+	bot.session = s
 }
 
 func Run() {
-	bot.session = initSession()
+	authorize()
 }
 
 func Stop() {
 	bot.session.Close()
-	out.infoln("websocket closed")
 }
