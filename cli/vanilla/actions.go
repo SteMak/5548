@@ -9,6 +9,7 @@ import (
 	vanilla "github.com/SteMak/vanilla"
 	"github.com/SteMak/vanilla/config"
 	"github.com/SteMak/vanilla/out"
+	"github.com/SteMak/vanilla/storage"
 	"github.com/urfave/cli"
 )
 
@@ -18,6 +19,8 @@ func run(c *cli.Context) error {
 	config.Load(c.GlobalString("config"))
 	out.SetDebug(c.GlobalBool("debug"))
 
+	storage.Init()
+
 	vanilla.Run()
 	defer vanilla.Stop()
 
@@ -25,6 +28,16 @@ func run(c *cli.Context) error {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 
 	<-sc
+
+	return nil
+}
+
+func migrate(c *cli.Context) error {
+	config.Load(c.GlobalString("config"))
+	out.SetDebug(c.GlobalBool("debug"))
+
+	storage.Init()
+	storage.Migrate()
 
 	return nil
 }

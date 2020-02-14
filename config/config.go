@@ -12,11 +12,13 @@ var cfg config
 var (
 	Session = &cfg.Session
 	Bot     = &cfg.Bot
+	Storage = &cfg.Storage
 )
 
 type config struct {
 	Session session `json:"session,omitempty"`
 	Bot     bot     `json:"bot,omitempty"`
+	Storage storage `json:"storage,omitempty"`
 }
 
 func Load(path string) {

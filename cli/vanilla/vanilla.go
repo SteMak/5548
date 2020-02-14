@@ -18,6 +18,13 @@ func app() *cli.App {
 			},
 		},
 		Action: run,
+		Commands: []cli.Command{
+			{
+				Name:   "migrate",
+				Usage:  "Create database",
+				Action: migrate,
+			},
+		},
 	}
 	a.UseShortOptionHandling = true
 	return a
