@@ -169,6 +169,7 @@ func Get(name string, data interface{}) (*discordgo.MessageSend, error) {
 
 	if m.Embed != nil {
 		embed := new(discordgo.MessageEmbed)
+		embed.Color = int(m.Embed.Color)
 
 		if m.Embed.Title != nil {
 			value, err := str(m.Embed.Title)
