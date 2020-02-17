@@ -1,6 +1,8 @@
 package config
 
 type bot struct {
-	GuildID  string   `json:"guild_id,omitempty"`
-	Channels []string `json:"channels,omitempty"`
+	GuildID       string  `json:"guild_id,omitempty"`
+	LogChannel    *string `json:"log_channel,omitempty"`
+	ErrorsChannel *string `json:"errors_channel,omitempty"`
+	Messages      *string `json:"messages,omitempty"`
 }

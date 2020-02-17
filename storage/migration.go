@@ -18,14 +18,14 @@ func init() {
 }
 
 func Migrate() {
-	out.Infoln("Migrations started")
+	out.Infoln("migrations")
 	for _, table := range tables {
-		out.Infof("Table %s... ", table.name())
+		out.Infof("  %-25s", table.name())
 		if err := table.createTable(); err != nil {
 			out.Infoln("[FAIL]")
 			out.Fatal(err)
 		}
 		out.Infoln("[OK]")
 	}
-	out.Infoln("Migrations ended")
+	out.Infoln()
 }

@@ -4,6 +4,9 @@ import (
 	"os"
 
 	"github.com/SteMak/vanilla/out"
+
+	_ "github.com/SteMak/vanilla/modules/dropper"
+	_ "github.com/SteMak/vanilla/modules/vanilla"
 )
 
 func main() {

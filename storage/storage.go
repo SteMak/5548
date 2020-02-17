@@ -17,7 +17,7 @@ var (
 )
 
 func Init() {
-	out.Info("storage connection... ")
+	out.Info("\nstorage connection         ")
 
 	var err error
 	db, err = sql.Open(config.Storage.Driver, config.Storage.Connection)
