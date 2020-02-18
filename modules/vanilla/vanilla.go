@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/SteMak/vanilla/mux"
+	"github.com/SteMak/vanilla/router"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -13,7 +13,7 @@ type module struct {
 	session *discordgo.Session
 	config  config
 
-	app *mux.App
+	app *router.App
 }
 
 func (module) ID() string {
@@ -36,7 +36,7 @@ func (bot *module) LoadConfig(path string) error {
 func (bot *module) Start(prefix string, session *discordgo.Session) {
 	bot.session = session
 
-	bot.app = &mux.App{
+	bot.app = &router.App{
 		Prefix:      prefix,
 		Description: bot.config.Description,
 		Session:     session,

@@ -2,10 +2,10 @@ package vanilla
 
 import (
 	"github.com/SteMak/vanilla/messages"
-	"github.com/SteMak/vanilla/mux"
+	"github.com/SteMak/vanilla/router"
 )
 
-func (bot *module) ping(ctx *mux.Context) error {
+func (bot *module) ping(ctx *router.Context) error {
 	data := map[string]interface{}{
 		"Mention": ctx.Message.Author.Mention(),
 	}
@@ -24,7 +24,7 @@ func (bot *module) ping(ctx *mux.Context) error {
 }
 
 func (bot *module) initCommands() {
-	bot.app.Commands = []mux.Command{
+	bot.app.Commands = []router.Command{
 		{
 			Name:   "ping",
 			Action: bot.ping,
