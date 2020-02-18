@@ -14,7 +14,7 @@ type module struct {
 	prefix string
 }
 
-func (module) Name() string {
+func (module) ID() string {
 	return "dropper"
 }
 

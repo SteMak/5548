@@ -9,6 +9,17 @@ type duration struct {
 	time.Duration
 }
 
+type timely struct {
+	Interval duration `json:"interval,omitempty"`
+	Accrual  uint     `json:"accrual,omitempty"`
+}
+
+type config struct {
+	Description string   `json:"description,omitempty"`
+	Timely      timely   `json:"timely,omitempty"`
+	Channels    []string `json:"channels,omitempty"`
+}
+
 func (d *duration) UnmarshalJSON(b []byte) (err error) {
 	if b[0] == '"' {
 		sd := string(b[1 : len(b)-1])
@@ -24,13 +35,4 @@ func (d *duration) UnmarshalJSON(b []byte) (err error) {
 
 func (d duration) MarshalJSON() (b []byte, err error) {
 	return []byte(d.String()), nil
-}
-
-type timely struct {
-	Interval duration `json:"interval,omitempty"`
-	Accrual  uint     `json:"accrual,omitempty"`
-}
-
-type config struct {
-	Timely timely `json:"timely,omitempty"`
 }

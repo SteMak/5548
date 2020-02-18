@@ -7,7 +7,7 @@ import (
 type Module interface {
 	LoadConfig(string) error
 
-	Name() string
+	ID() string
 
 	Start(prefix string, session *discordgo.Session)
 	Stop()

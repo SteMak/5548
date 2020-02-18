@@ -4,5 +4,5 @@ import "github.com/SteMak/vanilla/modules"
 
 func init() {
 	m := new(module)
-	modules.Register(m.Name(), m)
+	modules.Register(m.ID(), m)
 }
