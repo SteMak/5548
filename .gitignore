@@ -1,3 +1,5 @@
 .vscode
 cli/vanilla/vanilla
 cli/vanilla/storage.db
+bin/
+cli/vanilla/config/

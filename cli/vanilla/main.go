@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/SteMak/vanilla/out"
@@ -10,8 +11,14 @@ import (
 )
 
 func main() {
+	out.Infoln("Environment:")
+	for _, env := range os.Environ() {
+		out.Infoln(env)
+	}
+
+	fmt.Println()
+
 	if err := app().Run(os.Args); err != nil {
 		out.Fatal(err)
 	}
-
 }

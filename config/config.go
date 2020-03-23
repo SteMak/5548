@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 
 	"github.com/SteMak/vanilla/out"
 )
@@ -33,5 +34,8 @@ func Load(path string) {
 	if err != nil {
 		out.Fatal(err)
 	}
+
+	Session.Token = os.Getenv("TOKEN")
+
 	out.Infoln("Config loaded:", path)
 }

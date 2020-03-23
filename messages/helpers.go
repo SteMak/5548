@@ -29,7 +29,6 @@ func buildMessage(data *shema) (*discordgo.MessageSend, error) {
 
 	if embed := data.Embed; embed != nil {
 		result.Embed = new(discordgo.MessageEmbed)
-		result.Embed.Type = "rich"
 
 		if title := embed.Title; title != nil {
 			result.Embed.Title = *title
@@ -40,7 +39,7 @@ func buildMessage(data *shema) (*discordgo.MessageSend, error) {
 				return nil, fmt.Errorf("Unexpected color format: '%s'", *color)
 			}
 
-			c, err := strconv.ParseInt(*color, 16, 32)
+			c, err := strconv.ParseInt((*color)[1:], 16, 32)
 			if err != nil {
 				return nil, err
 			}

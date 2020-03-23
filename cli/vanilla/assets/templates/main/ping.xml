@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template>
-    <embed color="#2f3136">
+    <embed color="#ffa550">
         {{.Mention}} pong
     </embed>
 </template>

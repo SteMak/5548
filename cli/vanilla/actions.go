@@ -19,7 +19,7 @@ func run(c *cli.Context) error {
 	config.Load(c.GlobalString("config"))
 	out.SetDebug(c.GlobalBool("debug"))
 
-	storage.Init()
+	// storage.Init()
 
 	modules.Run()
 	defer modules.Stop()

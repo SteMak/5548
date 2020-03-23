@@ -13,7 +13,7 @@ func app() *cli.App {
 			},
 			&cli.StringFlag{
 				Name:  "c, config",
-				Value: "config.json",
+				Value: "./config/config.json",
 				Usage: "Path to the config file",
 			},
 		},
