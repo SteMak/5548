@@ -1,7 +1,7 @@
 package vanilla
 
 import (
-	"github.com/SteMak/vanilla/messages"
+	"github.com/SteMak/vanilla/modules"
 	"github.com/SteMak/vanilla/router"
 )
 
@@ -10,16 +10,7 @@ func (bot *module) ping(ctx *router.Context) error {
 		"Mention": ctx.Message.Author.Mention(),
 	}
 
-	m, err := messages.Get("main.ping", data)
-	if err != nil {
-		return err
-	}
-
-	_, err = bot.session.ChannelMessageSendComplex(ctx.Message.ChannelID, m)
-	if err != nil {
-		return err
-	}
-
+	modules.Send(ctx.Message.ChannelID, "main/ping.xml", data)
 	return nil
 }
 

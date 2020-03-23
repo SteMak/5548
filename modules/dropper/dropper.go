@@ -4,38 +4,42 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/cam-per/discordgo"
 )
 
 type module struct {
 	session *discordgo.Session
 	config  config
 
-	prefix string
+	running bool
 }
 
 func (module) ID() string {
 	return "dropper"
 }
 
-func (m *module) LoadConfig(path string) error {
-	data, err := ioutil.ReadFile(path)
+func (bot *module) IsRunning() bool {
+	return bot.running
+}
+
+func (bot *module) Init(prefix, configPath string) error {
+	data, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(data, &m.config)
+	err = json.Unmarshal(data, &bot.config)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *module) Start(prefix string, session *discordgo.Session) {
-	m.session = session
-	m.prefix = prefix
+func (bot *module) Start(session *discordgo.Session) {
+	bot.session = session
+	bot.running = true
 }
 
-func (m *module) Stop() {
-
+func (bot *module) Stop() {
+	bot.running = false
 }

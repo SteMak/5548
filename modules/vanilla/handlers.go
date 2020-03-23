@@ -2,7 +2,7 @@ package vanilla
 
 import (
 	"github.com/SteMak/vanilla/util"
-	"github.com/bwmarrin/discordgo"
+	"github.com/cam-per/discordgo"
 )
 
 func (bot *module) onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {

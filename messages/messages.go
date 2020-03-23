@@ -3,117 +3,25 @@ package messages
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"html/template"
 	"io/ioutil"
-	"strconv"
-	"text/template"
+	"os"
+	"path/filepath"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/SteMak/vanilla/config"
+
+	"github.com/cam-per/discordgo"
 
 	"github.com/SteMak/vanilla/out"
 )
 
-type embed struct {
-	Color       int64
-	Title       *template.Template
-	Description *template.Template
-	Footer      *template.Template
-}
-
-type message struct {
-	Content *template.Template
-	Embed   *embed
-}
-
 var (
-	msgs = make(map[string]*message)
+	tpls = make(map[string]*template.Template)
 )
 
 func loadMessage(name string, data json.RawMessage) error {
-	type config struct {
-		Content *string `json:"content,omitempty"`
-		Embed   *struct {
-			Color       *string `json:"color,omitempty"`
-			Title       *string `json:"title,omitempty"`
-			Description *string `json:"description,omitempty"`
-			Footer      *string `json:"footer,omitempty"`
-		} `json:"embed,omitempty"`
-	}
-
-	var c config
-	err := json.Unmarshal(data, &c)
-	if err != nil {
-		return err
-	}
-
-	var m message
-
-	if c.Content != nil {
-		data, err := ioutil.ReadFile(*c.Content)
-		if err != nil {
-			return err
-		}
-		m.Content, err = template.New(*c.Content).
-			Funcs(funcs).
-			Parse(string(data))
-
-		if err != nil {
-			return err
-		}
-	}
-
-	if c.Embed != nil {
-		m.Embed = new(embed)
-		if c.Embed.Color != nil {
-			m.Embed.Color, err = strconv.ParseInt(string([]rune(*c.Embed.Color)[1:]), 16, 32)
-			if err != nil {
-				return err
-			}
-		}
-
-		if c.Embed.Title != nil {
-			data, err := ioutil.ReadFile(*c.Embed.Title)
-			if err != nil {
-				return err
-			}
-
-			m.Embed.Title, err = template.New(*c.Embed.Title).
-				Funcs(funcs).
-				Parse(string(data))
-
-			if err != nil {
-				return err
-			}
-
-		}
-
-		if c.Embed.Description != nil {
-			data, err := ioutil.ReadFile(*c.Embed.Description)
-			if err != nil {
-				return err
-			}
-
-			m.Embed.Description, err = template.New(*c.Embed.Description).
-				Funcs(funcs).
-				Parse(string(data))
-
-			if err != nil {
-				return err
-			}
-		}
-
-		if c.Embed.Footer != nil {
-			m.Embed.Footer, err = template.New(*c.Embed.Footer).
-				Funcs(funcs).
-				ParseFiles(*c.Embed.Footer)
-
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	msgs[name] = &m
 	return nil
 }
 
@@ -142,64 +50,63 @@ func LoadMessage(path *string) error {
 	return nil
 }
 
+func AddTpl(f string) error {
+	file, err := os.Open(f)
+	if err != err {
+		return err
+	}
+	defer file.Close()
+
+	var data shema
+	err = xml.NewDecoder(file).Decode(&data)
+	if err != nil {
+		return err
+	}
+
+	d, err := ioutil.ReadFile(f)
+	if err != nil {
+		return err
+	}
+	d = normalizeSpaces(d)
+
+	name, err := filepath.Rel(config.Bot.Templates, f)
+	if err != nil {
+		return err
+	}
+
+	tpl, err := template.New(name).Funcs(funcs).Parse(string(d))
+	if err != nil {
+		return err
+	}
+
+	tpls[name] = tpl
+	return nil
+}
+
 func Get(name string, data interface{}) (*discordgo.MessageSend, error) {
-	m, ok := msgs[name]
+	tpl, ok := tpls[name]
 	if !ok {
 		return nil, fmt.Errorf("message '%s' no found", name)
 	}
 
-	str := func(t *template.Template) (string, error) {
-		buf := bytes.NewBufferString("")
-		err := t.Execute(buf, data)
-		if err != nil {
-			return "", err
-		}
-		return buf.String(), nil
+	buf := bytes.NewBufferString("")
+	err := tpl.ExecuteTemplate(buf, name, data)
+	if err != nil {
+		return nil, err
 	}
 
-	result := new(discordgo.MessageSend)
-
-	if m.Content != nil {
-		value, err := str(m.Content)
-		if err != nil {
-			return nil, err
-		}
-		result.Content = value
+	s := bytes.NewBufferString("")
+	err = xml.EscapeText(s, buf.Bytes())
+	if err != nil {
+		return nil, err
 	}
 
-	if m.Embed != nil {
-		embed := new(discordgo.MessageEmbed)
-		embed.Color = int(m.Embed.Color)
+	var m shema
 
-		if m.Embed.Title != nil {
-			value, err := str(m.Embed.Title)
-			if err != nil {
-				return nil, err
-			}
-			embed.Title = value
-		}
-
-		if m.Embed.Description != nil {
-			value, err := str(m.Embed.Description)
-			if err != nil {
-				return nil, err
-			}
-			embed.Description = value
-		}
-
-		if m.Embed.Footer != nil {
-			value, err := str(m.Embed.Footer)
-			if err != nil {
-				return nil, err
-			}
-
-			embed.Footer = &discordgo.MessageEmbedFooter{
-				Text: value,
-			}
-		}
-
-		result.Embed = embed
+	err = xml.NewDecoder(buf).Decode(&m)
+	if err != nil {
+		return nil, err
 	}
 
-	return result, nil
+	return buildMessage(&m)
 }

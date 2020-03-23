@@ -6,7 +6,7 @@ import (
 
 	"github.com/SteMak/vanilla/router"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/cam-per/discordgo"
 )
 
 type module struct {
@@ -14,14 +14,20 @@ type module struct {
 	config  config
 
 	app *router.App
+
+	running bool
 }
 
 func (module) ID() string {
 	return "vanilla"
 }
 
-func (bot *module) LoadConfig(path string) error {
-	data, err := ioutil.ReadFile(path)
+func (bot *module) IsRunning() bool {
+	return bot.running
+}
+
+func (bot *module) Init(prefix, configPath string) error {
+	data, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		return err
 	}
@@ -30,23 +36,24 @@ func (bot *module) LoadConfig(path string) error {
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func (bot *module) Start(prefix string, session *discordgo.Session) {
-	bot.session = session
 
 	bot.app = &router.App{
 		Prefix:      prefix,
 		Description: bot.config.Description,
-		Session:     session,
 	}
 
 	bot.initCommands()
+
+	return nil
+}
+
+func (bot *module) Start(session *discordgo.Session) {
+	bot.session = session
+	bot.running = true
 
 	bot.session.AddHandler(bot.onMessageCreate)
 }
 
 func (bot *module) Stop() {
-
+	bot.running = false
 }

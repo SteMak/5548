@@ -1,7 +1,7 @@
 package messages
 
 import (
-	"text/template"
+	"html/template"
 )
 
 var (

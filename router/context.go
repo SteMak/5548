@@ -9,7 +9,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/cam-per/discordgo"
 )
 
 // Context is a type that is passed through to

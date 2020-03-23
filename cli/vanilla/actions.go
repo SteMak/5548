@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	vanilla "github.com/SteMak/vanilla"
 	"github.com/SteMak/vanilla/config"
+	"github.com/SteMak/vanilla/modules"
 	"github.com/SteMak/vanilla/out"
 	"github.com/SteMak/vanilla/storage"
 	"github.com/urfave/cli"
@@ -21,12 +21,11 @@ func run(c *cli.Context) error {
 
 	storage.Init()
 
-	vanilla.Run()
-	defer vanilla.Stop()
+	modules.Run()
+	defer modules.Stop()
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-
 	<-sc
 
 	return nil
@@ -37,7 +36,6 @@ func migrate(c *cli.Context) error {
 	out.SetDebug(c.GlobalBool("debug"))
 
 	storage.Init()
-	storage.Migrate()
 
 	return nil
 }

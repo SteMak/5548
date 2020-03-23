@@ -16,6 +16,10 @@ var (
 	debug bool
 )
 
+var (
+	ErrorHandler func(string)
+)
+
 func SetDebug(d bool) {
 	debug = d
 }
@@ -27,11 +31,17 @@ func Fatal(msg ...interface{}) {
 	os.Exit(1)
 }
 
-func Err(msg ...interface{}) {
+func Err(handled bool, msg ...interface{}) {
 	ct.Foreground(ct.Red, true)
 	fmt.Print("[E]: " + time.Now().Format(timeFormat) + " -> ")
 	fmt.Println(msg...)
 	ct.ResetColor()
+
+	if handled {
+		if ErrorHandler != nil {
+			ErrorHandler(fmt.Sprint(msg...))
+		}
+	}
 }
 
 func Info(msg ...interface{}) {

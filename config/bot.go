@@ -5,5 +5,5 @@ type bot struct {
 	LogChannel     *string `json:"log_channel,omitempty"`
 	ErrorsChannel  *string `json:"errors_channel,omitempty"`
 	ConsoleChannel *string `json:"console_channel,omitempty"`
-	Messages       *string `json:"messages,omitempty"`
+	Templates      string  `json:"templates,omitempty"`
 }
